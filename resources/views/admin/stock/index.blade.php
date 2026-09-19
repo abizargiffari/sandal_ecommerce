@@ -11,7 +11,7 @@
             <ul class="text-sm text-yellow-700 space-y-1">
                 @foreach ($lowStockVariants as $variant)
                     <li>
-                        {{ $variant->product->name }} - Ukuran {{ $variant->size }}
+                        {{ $variant->product?->name ?? 'Produk telah dihapus' }} - Ukuran {{ $variant->size }}
                         <span class="font-medium">({{ $variant->stock }} tersisa)</span>
                     </li>
                 @endforeach
@@ -71,9 +71,9 @@
                             {{ $movement->created_at->format('d M Y H:i') }}
                         </td>
                         <td class="px-4 py-3">
-                            {{ $movement->productVariant->product->name ?? '-' }}
+                            {{ $movement->productVariant?->product?->name ?? 'Produk telah dihapus' }}
                             <span class="text-gray-400 text-xs">
-                                (Ukuran {{ $movement->productVariant->size ?? '-' }})
+                                (Ukuran {{ $movement->productVariant?->size ?? '-' }})
                             </span>
                         </td>
                         <td class="px-4 py-3">
@@ -91,7 +91,7 @@
                             {{ $movement->quantity > 0 ? '+' : '' }}{{ $movement->quantity }}
                         </td>
                         <td class="px-4 py-3 text-gray-500">{{ $movement->note ?? '-' }}</td>
-                        <td class="px-4 py-3 text-gray-500">{{ $movement->createdBy->name ?? 'Sistem' }}</td>
+                        <td class="px-4 py-3 text-gray-500">{{ $movement->createdBy?->name ?? 'Sistem' }}</td>
                     </tr>
                 @empty
                     <tr>

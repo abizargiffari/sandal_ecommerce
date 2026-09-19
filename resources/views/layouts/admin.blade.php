@@ -32,14 +32,23 @@
                class="block px-3 py-2 rounded hover:bg-gray-800 {{ request()->routeIs('admin.stock.*') ? 'bg-gray-800' : '' }}">
                 Stok
             </a>
-            <a href="#" class="block px-3 py-2 rounded hover:bg-gray-800 opacity-50 cursor-not-allowed">
-                Pengguna <span class="text-xs">(fase berikutnya)</span>
+            @if (auth()->user()->role === 'admin')
+                <a href="{{ route('admin.users.index') }}"
+                   class="block px-3 py-2 rounded hover:bg-gray-800 {{ request()->routeIs('admin.users.*') ? 'bg-gray-800' : '' }}">
+                    Pengguna
+                </a>
+            @endif
+            <a href="{{ route('admin.orders.index') }}"
+               class="block px-3 py-2 rounded hover:bg-gray-800 {{ request()->routeIs('admin.orders.*') ? 'bg-gray-800' : '' }}">
+                Pesanan
             </a>
-            <a href="#" class="block px-3 py-2 rounded hover:bg-gray-800 opacity-50 cursor-not-allowed">
-                Pesanan <span class="text-xs">(fase berikutnya)</span>
+            <a href="{{ route('admin.returns.index') }}"
+               class="block px-3 py-2 rounded hover:bg-gray-800 {{ request()->routeIs('admin.returns.*') ? 'bg-gray-800' : '' }}">
+                Return
             </a>
-            <a href="#" class="block px-3 py-2 rounded hover:bg-gray-800 opacity-50 cursor-not-allowed">
-                Keuangan <span class="text-xs">(fase berikutnya)</span>
+            <a href="{{ route('admin.finance.index') }}"
+               class="block px-3 py-2 rounded hover:bg-gray-800 {{ request()->routeIs('admin.finance.*') ? 'bg-gray-800' : '' }}">
+                Keuangan
             </a>
         </nav>
     </aside>

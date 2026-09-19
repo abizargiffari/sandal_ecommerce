@@ -1,8 +1,13 @@
 <?php
 
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\FinanceController;
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\ReturnController;
 use App\Http\Controllers\Admin\StockMovementController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -55,9 +60,7 @@ Route::middleware(['auth', 'role:customer'])->prefix('akun')->name('account.')->
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:admin,staff'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('categories', CategoryController::class);
     Route::resource('products', ProductController::class);
@@ -68,6 +71,30 @@ Route::middleware(['auth', 'role:admin,staff'])->prefix('admin')->name('admin.')
         Route::post('/', [StockMovementController::class, 'store'])->name('store');
     });
 
-    // TODO (fase berikutnya): resource route untuk pesanan, retur,
-    // keuangan, pengguna.
+    Route::middleware('role:admin')->group(function () {
+        Route::resource('users', UserController::class);
+    });
+
+    Route::prefix('orders')->name('orders.')->group(function () {
+        Route::get('/', [OrderController::class, 'index'])->name('index');
+        Route::get('/create', [OrderController::class, 'create'])->name('create');
+        Route::post('/', [OrderController::class, 'store'])->name('store');
+        Route::get('/{order}', [OrderController::class, 'show'])->name('show');
+        Route::post('/{order}/status', [OrderController::class, 'updateStatus'])->name('updateStatus');
+        Route::post('/{order}/confirm-payment', [OrderController::class, 'confirmPayment'])->name('confirmPayment');
+    });
+
+    Route::prefix('returns')->name('returns.')->group(function () {
+        Route::get('/', [ReturnController::class, 'index'])->name('index');
+        Route::get('/create', [ReturnController::class, 'create'])->name('create');
+        Route::post('/', [ReturnController::class, 'store'])->name('store');
+        Route::post('/{return}/status', [ReturnController::class, 'updateStatus'])->name('updateStatus');
+    });
+
+    Route::prefix('finance')->name('finance.')->group(function () {
+        Route::get('/', [FinanceController::class, 'index'])->name('index');
+        Route::get('/create', [FinanceController::class, 'create'])->name('create');
+        Route::post('/', [FinanceController::class, 'store'])->name('store');
+        Route::delete('/{finance}', [FinanceController::class, 'destroy'])->name('destroy');
+    });
 });

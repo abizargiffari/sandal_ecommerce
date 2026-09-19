@@ -42,8 +42,11 @@ class StockMovementController extends Controller
 
         $products = Product::orderBy('name')->get(['id', 'name']);
 
-        // Ringkasan cepat: produk dengan stok menipis (<= 5) untuk peringatan admin
+        // Ringkasan cepat: produk dengan stok menipis (<= 5) untuk peringatan admin.
+        // whereHas('product') memastikan variant dari produk yang sudah
+        // dihapus (soft delete) tidak ikut muncul di peringatan ini.
         $lowStockVariants = ProductVariant::with('product')
+            ->whereHas('product')
             ->where('stock', '<=', 5)
             ->orderBy('stock')
             ->limit(5)
@@ -62,7 +65,22 @@ class StockMovementController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('admin.stock.create', compact('products'));
+        // Data disiapkan sebagai array PHP polos di sini (bukan closure
+        // bersarang di dalam @json() di Blade) — closure bersarang membuat
+        // Blade kesulitan mem-parsing directive-nya dan bisa gagal senyap.
+        $productDataJson = $products->keyBy('id')->map(function ($product) {
+            return $product->variants->map(function ($variant) {
+                $colorLabel = $variant->color ? ' / ' . $variant->color : '';
+
+                return [
+                    'id' => $variant->id,
+                    'label' => 'Ukuran ' . $variant->size . $colorLabel,
+                    'stock' => $variant->stock,
+                ];
+            })->values();
+        });
+
+        return view('admin.stock.create', compact('products', 'productDataJson'));
     }
 
     public function store(Request $request): RedirectResponse

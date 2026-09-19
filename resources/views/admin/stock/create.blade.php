@@ -47,13 +47,13 @@
             <div class="mb-4">
                 <label class="block text-sm font-medium mb-1">Jumlah</label>
                 <input type="number" name="quantity" min="1" required
-                    class="w-full border rounded px-3 py-2 text-sm">
+                       class="w-full border rounded px-3 py-2 text-sm">
             </div>
 
             <div class="mb-4">
                 <label class="block text-sm font-medium mb-1">Catatan (opsional)</label>
                 <textarea name="note" rows="2" placeholder="Contoh: barang rusak saat pengiriman, hasil stok opname, dll."
-                        class="w-full border rounded px-3 py-2 text-sm"></textarea>
+                          class="w-full border rounded px-3 py-2 text-sm"></textarea>
             </div>
 
             <div class="flex gap-3 mt-6">
@@ -69,13 +69,7 @@
 
     {{-- Data produk & varian untuk dropdown dinamis, tanpa perlu AJAX --}}
     <script>
-        const productData = json($products->keyBy('id')->map(function ($p) {
-            return $p->variants->map(fn ($v) => [
-                'id' => $v->id,
-                'label' => 'Ukuran ' . $v->size . ($v->color ? ' / ' . $v->color : ''),
-                'stock' => $v->stock,
-            ]);
-        }));
+        const productData = @json($productDataJson);
 
         const productSelect = document.getElementById('product-select');
         const variantSelect = document.getElementById('variant-select');
